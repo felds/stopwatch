@@ -2,8 +2,6 @@ import React, { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
-import "./styles.css";
-
 type AbstractCounterChildrenProps = {
   currentTime: number;
   isRunning: boolean;
