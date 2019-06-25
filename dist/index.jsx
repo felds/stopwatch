@@ -17,104 +17,73 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importDefault(require("react"));
-var react_dom_1 = __importDefault(require("react-dom"));
 var prop_types_1 = __importDefault(require("prop-types"));
-var AbstractCounter = /** @class */ (function (_super) {
-    __extends(AbstractCounter, _super);
-    function AbstractCounter() {
+require("./demo.css");
+var StopWatch = /** @class */ (function (_super) {
+    __extends(StopWatch, _super);
+    function StopWatch() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
-            currentTime: _this.props.initialTime,
+            timeElapsed: 0,
             isRunning: false,
-            lastTick: null,
         };
+        _this.timeout = null;
+        _this.lastTick = null;
         _this.stop = function () {
             _this.setState({
                 isRunning: false,
-                currentTime: _this.props.initialTime,
-                lastTick: null,
+                timeElapsed: 0,
             });
         };
         _this.toggleRunning = function () {
-            _this.setState(function (prev) { return ({
+            return _this.setState(function (prev) { return ({
                 isRunning: !prev.isRunning,
-                lastTick: null,
-            }); }, _this.tick);
+            }); });
         };
         _this.tick = function () {
-            var _a = _this.state, lastTick = _a.lastTick, isRunning = _a.isRunning, currentTime = _a.currentTime;
-            var duration = _this.props.duration;
+            var _a = _this.state, isRunning = _a.isRunning, timeElapsed = _a.timeElapsed;
+            var _b = _this.props, duration = _b.duration, onFinish = _b.onFinish;
             var tick = performance.now();
             if (isRunning) {
-                var delta = lastTick ? tick - lastTick : 0;
-                var newTime = Math.min(currentTime + delta, duration);
-                var isFinished = newTime === duration;
+                var delta = _this.lastTick ? tick - _this.lastTick : 0;
+                var newTime = Math.min(timeElapsed + delta, duration);
+                var isFinished_1 = isRunning && timeElapsed === duration;
                 _this.setState({
-                    currentTime: newTime,
-                    isRunning: !isFinished,
-                    lastTick: tick,
-                });
-                if (isFinished) {
-                    _this.props.onFinish();
-                }
-                setTimeout(_this.tick, 50);
+                    timeElapsed: newTime,
+                    isRunning: isRunning && !isFinished_1,
+                }, function () { return isRunning && isFinished_1 && onFinish(); });
             }
+            _this.lastTick = tick;
+            _this.timeout = setTimeout(_this.tick, 50);
         };
         return _this;
     }
-    AbstractCounter.prototype.render = function () {
-        var _a = this.state, currentTime = _a.currentTime, isRunning = _a.isRunning;
+    StopWatch.prototype.componentWillMount = function () {
+        this.tick();
+    };
+    StopWatch.prototype.componentWillUnmount = function () {
+        clearTimeout(this.timeout);
+    };
+    StopWatch.prototype.render = function () {
+        var _a = this.state, timeElapsed = _a.timeElapsed, isRunning = _a.isRunning;
         var duration = this.props.duration;
         return this.props.children({
-            currentTime: currentTime,
+            timeElapsed: timeElapsed,
             isRunning: isRunning,
             toggleRunning: this.toggleRunning,
             stop: this.stop,
-            secondsRemaining: (duration - currentTime) / 1000,
+            isFinished: duration === timeElapsed,
         });
     };
-    AbstractCounter.propTypes = {
+    StopWatch.propTypes = {
         onFinish: prop_types_1.default.func,
         initialTime: prop_types_1.default.number,
         duration: prop_types_1.default.number.isRequired,
     };
-    AbstractCounter.defaultProps = {
+    StopWatch.defaultProps = {
         initialTime: 0,
         duration: +Infinity,
         onFinish: function () { },
     };
-    return AbstractCounter;
+    return StopWatch;
 }(react_1.default.Component));
-exports.default = AbstractCounter;
-function App() {
-    var duration = 5 * 1000;
-    return (<>
-      <AbstractCounter duration={duration}>
-        {function (_a) {
-        var currentTime = _a.currentTime, isRunning = _a.isRunning, toggleRunning = _a.toggleRunning, stop = _a.stop, secondsRemaining = _a.secondsRemaining;
-        return (<div>
-              <p>current time: {currentTime.toFixed(2)}</p>
-              <p>
-                <progress max={duration} value={currentTime}/>
-              </p>
-              <p>
-                <button onClick={toggleRunning}>
-                  {isRunning ? "pause" : "start"}
-                </button>
-                <button onClick={stop}>stop</button>
-              </p>
-              <p>Segundos restantes: {secondsRemaining.toFixed(1)}</p>
-            </div>);
-    }}
-      </AbstractCounter>
-
-      <AbstractCounter duration={2000} children={function (_a) {
-        var currentTime = _a.currentTime, toggleRunning = _a.toggleRunning;
-        return (<div>
-            <h1 onClick={toggleRunning}>{currentTime.toFixed(1)}</h1>
-          </div>);
-    }}/>
-    </>);
-}
-var rootElement = document.getElementById("root");
-react_dom_1.default.render(<App />, rootElement);
