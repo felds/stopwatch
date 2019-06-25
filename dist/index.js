@@ -34,11 +34,9 @@ var StopWatch = /** @class */ (function (_super) {
                 timeElapsed: 0,
             });
         };
-        _this.toggleRunning = function () {
-            return _this.setState(function (prev) { return ({
-                isRunning: !prev.isRunning,
-            }); });
-        };
+        _this.toggle = function () { return (_this.state.isRunning ? _this.pause() : _this.play()); };
+        _this.pause = function () { return _this.setState({ isRunning: false }); };
+        _this.play = function () { return _this.setState({ isRunning: true }); };
         _this.tick = function () {
             var _a = _this.state, isRunning = _a.isRunning, timeElapsed = _a.timeElapsed;
             var _b = _this.props, duration = _b.duration, onFinish = _b.onFinish;
@@ -69,8 +67,10 @@ var StopWatch = /** @class */ (function (_super) {
         return this.props.children({
             timeElapsed: timeElapsed,
             isRunning: isRunning,
-            toggleRunning: this.toggleRunning,
+            toggle: this.toggle,
             stop: this.stop,
+            play: this.play,
+            pause: this.pause,
             isFinished: duration === timeElapsed,
         });
     };

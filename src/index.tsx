@@ -5,8 +5,10 @@ export type StopWatchChildrenProps = {
   timeElapsed: number;
   isRunning: boolean;
   isFinished: boolean;
-  toggleRunning(): void;
+  toggle(): void;
   stop(): void;
+  pause(): void;
+  play(): void;
 };
 
 export type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
@@ -44,10 +46,11 @@ export default class StopWatch extends React.Component<
     });
   };
 
-  toggleRunning = () =>
-    this.setState(prev => ({
-      isRunning: !prev.isRunning,
-    }));
+  toggle = () => (this.state.isRunning ? this.pause() : this.play());
+
+  pause = () => this.setState({ isRunning: false });
+
+  play = () => this.setState({ isRunning: true });
 
   tick = () => {
     const { isRunning, timeElapsed } = this.state;
@@ -87,8 +90,10 @@ export default class StopWatch extends React.Component<
     return this.props.children({
       timeElapsed,
       isRunning,
-      toggleRunning: this.toggleRunning,
+      toggle: this.toggle,
       stop: this.stop,
+      play: this.play,
+      pause: this.pause,
       isFinished: duration === timeElapsed,
     });
   }

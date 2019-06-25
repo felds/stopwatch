@@ -4,8 +4,10 @@ export declare type StopWatchChildrenProps = {
     timeElapsed: number;
     isRunning: boolean;
     isFinished: boolean;
-    toggleRunning(): void;
+    toggle(): void;
     stop(): void;
+    pause(): void;
+    play(): void;
 };
 export declare type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 export declare type StopWatchProps = {
@@ -27,7 +29,9 @@ export default class StopWatch extends React.Component<StopWatchProps, StopWatch
     timeout: any;
     lastTick: any;
     stop: () => void;
-    toggleRunning: () => void;
+    toggle: () => void;
+    pause: () => void;
+    play: () => void;
     tick: () => void;
     componentWillMount(): void;
     componentWillUnmount(): void;
