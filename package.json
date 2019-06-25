@@ -1,8 +1,13 @@
 {
   "name": "@felds/stopwatch",
   "version": "1.1.0",
-  "description": "",
-  "keywords": [],
+  "description": "A renderless react component to create stopwatches.",
+  "keywords": [
+    "react",
+    "renderless",
+    "clock",
+    "stopwatch"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
