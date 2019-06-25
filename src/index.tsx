@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { ReactNode } from "react"
 import ReactDOM from "react-dom"
 import PropTypes from "prop-types"
@@ -26,6 +27,37 @@ type StopWatchState = {
 }
 
 class StopWatch extends React.Component<StopWatchProps, StopWatchState> {
+=======
+import React, { ReactNode } from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+
+export type AbstractCounterChildrenProps = {
+  currentTime: number;
+  isRunning: boolean;
+  toggleRunning(): void;
+  stop(): void;
+  secondsRemaining: number;
+};
+
+export type AbstractCounterProps = {
+  duration: number;
+  initialTime: number;
+  onFinish(): void;
+  children(props: AbstractCounterChildrenProps): ReactNode;
+};
+
+export type AbstractCounterState = {
+  isRunning: boolean;
+  lastTick?: number;
+  currentTime: number;
+};
+
+export default class AbstractCounter extends React.Component<
+  AbstractCounterProps,
+  AbstractCounterState
+> {
+>>>>>>> publish tsc
   state = {
     timeElapsed: 0,
     isRunning: false,
