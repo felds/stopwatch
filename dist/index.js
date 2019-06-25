@@ -39,19 +39,24 @@ var StopWatch = /** @class */ (function (_super) {
         _this.play = function () { return _this.setState({ isRunning: true }); };
         _this.tick = function () {
             var _a = _this.state, isRunning = _a.isRunning, timeElapsed = _a.timeElapsed;
-            var _b = _this.props, duration = _b.duration, onFinish = _b.onFinish;
+            var _b = _this.props, duration = _b.duration, updateInterval = _b.updateInterval, onFinish = _b.onFinish, onChange = _b.onChange;
             var tick = performance.now();
             if (isRunning) {
                 var delta = _this.lastTick ? tick - _this.lastTick : 0;
-                var newTime = Math.min(timeElapsed + delta, duration);
+                var newTime_1 = Math.min(timeElapsed + delta, duration);
                 var isFinished_1 = isRunning && timeElapsed === duration;
                 _this.setState({
-                    timeElapsed: newTime,
+                    timeElapsed: newTime_1,
                     isRunning: isRunning && !isFinished_1,
-                }, function () { return isRunning && isFinished_1 && onFinish(); });
+                }, function () {
+                    if (isRunning && isFinished_1)
+                        onFinish();
+                    if (newTime_1 !== timeElapsed)
+                        onChange(newTime_1);
+                });
             }
             _this.lastTick = tick;
-            _this.timeout = setTimeout(_this.tick, 50);
+            _this.timeout = setTimeout(_this.tick, updateInterval);
         };
         return _this;
     }
@@ -83,6 +88,8 @@ var StopWatch = /** @class */ (function (_super) {
         initialTime: 0,
         duration: +Infinity,
         onFinish: function () { },
+        onChange: function () { },
+        updateInterval: 50,
     };
     return StopWatch;
 }(react_1.default.Component));

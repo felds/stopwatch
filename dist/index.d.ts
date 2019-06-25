@@ -14,7 +14,9 @@ export declare type StopWatchProps = {
     duration: number;
     initialTime: number;
     onFinish(): void;
+    onChange(timeElapsed: number): void;
     children: StopWatchChildren;
+    updateInterval: number;
 };
 export declare type StopWatchState = {
     isRunning: boolean;
@@ -45,5 +47,7 @@ export default class StopWatch extends React.Component<StopWatchProps, StopWatch
         initialTime: number;
         duration: number;
         onFinish: () => void;
+        onChange: () => void;
+        updateInterval: number;
     };
 }

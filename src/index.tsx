@@ -17,7 +17,9 @@ export type StopWatchProps = {
   duration: number;
   initialTime: number;
   onFinish(): void;
+  onChange(timeElapsed: number): void;
   children: StopWatchChildren;
+  updateInterval: number;
 };
 
 export type StopWatchState = {
@@ -54,7 +56,7 @@ export default class StopWatch extends React.Component<
 
   tick = () => {
     const { isRunning, timeElapsed } = this.state;
-    const { duration, onFinish } = this.props;
+    const { duration, updateInterval, onFinish, onChange } = this.props;
     const tick = performance.now();
 
     if (isRunning) {
@@ -67,12 +69,15 @@ export default class StopWatch extends React.Component<
           timeElapsed: newTime,
           isRunning: isRunning && !isFinished,
         },
-        () => isRunning && isFinished && onFinish(),
+        () => {
+          if (isRunning && isFinished) onFinish();
+          if (newTime !== timeElapsed) onChange(newTime);
+        },
       );
     }
 
     this.lastTick = tick;
-    this.timeout = setTimeout(this.tick, 50);
+    this.timeout = setTimeout(this.tick, updateInterval);
   };
 
   componentWillMount() {
@@ -108,5 +113,7 @@ export default class StopWatch extends React.Component<
     initialTime: 0,
     duration: +Infinity,
     onFinish: () => {},
+    onChange: () => {},
+    updateInterval: 50,
   };
 }
