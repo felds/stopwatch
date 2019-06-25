@@ -1,148 +1,142 @@
-import React, { ReactNode } from "react";
-import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
+import React, { ReactNode } from "react"
+import ReactDOM from "react-dom"
+import PropTypes from "prop-types"
+import classnames from "classnames"
+import "./demo.css"
 
-type AbstractCounterChildrenProps = {
-  currentTime: number;
-  isRunning: boolean;
-  toggleRunning(): void;
-  stop(): void;
-  secondsRemaining: number;
-};
+type StopWatchChildrenProps = {
+  timeElapsed: number
+  isRunning: boolean
+  isFinished: boolean
+  toggleRunning(): void
+  stop(): void
+}
 
-type AbstractCounterProps = {
-  duration: number;
-  initialTime: number;
-  onFinish(): void;
-  children(props: AbstractCounterChildrenProps): ReactNode;
-};
+type StopWatchProps = {
+  duration: number
+  initialTime: number
+  onFinish(): void
+  children(props: StopWatchChildrenProps): ReactNode
+}
 
-type AbstractCounterState = {
-  isRunning: boolean;
-  lastTick?: number;
-  currentTime: number;
-};
+type StopWatchState = {
+  isRunning: boolean
+  lastTick?: number
+  timeElapsed: number
+}
 
-class AbstractCounter extends React.Component<
-  AbstractCounterProps,
-  AbstractCounterState
-> {
+class StopWatch extends React.Component<StopWatchProps, StopWatchState> {
   state = {
-    currentTime: this.props.initialTime,
+    timeElapsed: 0,
     isRunning: false,
-    lastTick: null,
-  };
+  }
+
+  timeout = null
+
+  lastTick = null
 
   stop = () => {
     this.setState({
       isRunning: false,
-      currentTime: this.props.initialTime,
-      lastTick: null,
-    });
-  };
+      timeElapsed: 0,
+    })
+  }
 
-  toggleRunning = () => {
-    this.setState(
-      prev => ({
-        isRunning: !prev.isRunning,
-        lastTick: null,
-      }),
-      this.tick,
-    );
-  };
+  toggleRunning = () =>
+    this.setState(prev => ({
+      isRunning: !prev.isRunning,
+    }))
 
   tick = () => {
-    const { lastTick, isRunning, currentTime } = this.state;
-    const { duration } = this.props;
-    const tick = performance.now();
+    const { isRunning, timeElapsed } = this.state
+    const { duration, onFinish } = this.props
+    const tick = performance.now()
 
     if (isRunning) {
-      const delta = lastTick ? tick - lastTick : 0;
-      const newTime = Math.min(currentTime + delta, duration);
-      const isFinished = newTime === duration;
+      const delta = this.lastTick ? tick - this.lastTick : 0
+      const newTime = Math.min(timeElapsed + delta, duration)
+      const isFinished = isRunning && timeElapsed === duration
 
-      this.setState({
-        currentTime: newTime,
-        isRunning: !isFinished,
-        lastTick: tick,
-      });
-
-      if (isFinished) {
-        this.props.onFinish();
-      }
-
-      setTimeout(this.tick, 50);
+      this.setState(
+        {
+          timeElapsed: newTime,
+          isRunning: isRunning && !isFinished,
+        },
+        () => isRunning && isFinished && onFinish(),
+      )
     }
-  };
+
+    this.lastTick = tick
+    this.timeout = setTimeout(this.tick, 50)
+  }
+
+  componentWillMount() {
+    this.tick()
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout)
+  }
 
   render() {
-    const { currentTime, isRunning } = this.state;
-    const { duration } = this.props;
+    const { timeElapsed, isRunning } = this.state
+    const { duration } = this.props
 
     return this.props.children({
-      currentTime,
+      timeElapsed,
       isRunning,
       toggleRunning: this.toggleRunning,
       stop: this.stop,
-      secondsRemaining: (duration - currentTime) / 1000,
-    });
+      isFinished: duration === timeElapsed,
+    })
   }
 
   static propTypes = {
     onFinish: PropTypes.func,
     initialTime: PropTypes.number,
     duration: PropTypes.number.isRequired,
-  };
+  }
 
   static defaultProps = {
     initialTime: 0,
     duration: +Infinity,
     onFinish: () => {},
-  };
+  }
 }
 
 function App() {
-  const duration = 5 * 1000;
+  const duration = 1 * 1000
 
   return (
-    <>
-      <AbstractCounter duration={duration}>
-        {({
-          currentTime,
-          isRunning,
-          toggleRunning,
-          stop,
-          secondsRemaining,
-        }) => {
-          return (
-            <div>
-              <p>current time: {currentTime.toFixed(2)}</p>
-              <p>
-                <progress max={duration} value={currentTime} />
-              </p>
-              <p>
-                <button onClick={toggleRunning}>
-                  {isRunning ? "pause" : "start"}
-                </button>
-                <button onClick={stop}>stop</button>
-              </p>
-              <p>Segundos restantes: {secondsRemaining.toFixed(1)}</p>
-            </div>
-          );
-        }}
-      </AbstractCounter>
+    <StopWatch
+      duration={duration}
+      onFinish={() => alert("It's done")}
+      children={({ isRunning, toggleRunning, timeElapsed, stop, isFinished }) => (
+        <div
+          className={classnames(
+            "stopwatch",
+            isFinished && "stopwatch--is-finished",
+            isRunning && "stopwatch--is-running",
+          )}
+        >
+          <div className="stopwatch__display">{(timeElapsed / 1000).toFixed(5)}s</div>
 
-      <AbstractCounter
-        duration={2000}
-        children={({ currentTime, toggleRunning }) => (
-          <div>
-            <h1 onClick={toggleRunning}>{currentTime.toFixed(1)}</h1>
+          <div className="stopwatch__actions">
+            <button className="stopwatch__action stopwatch__action--toggle" onClick={toggleRunning}>
+              {isRunning ? "Pause" : "Play"}
+            </button>
+
+            <button className="stopwatch__action stopwatch__action--stop" onClick={stop}>
+              Stop/Reset
+            </button>
           </div>
-        )}
-      />
-    </>
-  );
+        </div>
+      )}
+    />
+  )
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+const rootElement = document.getElementById("root")
+ReactDOM.render(<App />, rootElement)
+
+export default StopWatch

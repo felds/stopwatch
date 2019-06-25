@@ -1,0 +1,35 @@
+html {
+  font: 16px/1.414 sans-serif;
+}
+body {
+  margin: 4rem;
+}
+.stopwatch {
+  max-width: 20rem;
+  margin: 0 auto;
+  color: gray;
+  background: whitesmoke;
+  padding: 2rem;
+}
+.stopwatch--is-finished {
+  color: forestgreen;
+}
+.stopwatch--is-running {
+  color: black;
+}
+.stopwatch__display {
+  font-size: 3rem;
+  text-align: center;
+}
+.stopwatch__actions {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.stopwatch__action {
+  appearance: none;
+  border: 0;
+  background: silver;
+  flex: 1 0;
+  padding: 1rem;
+  margin: 0.5rem;
+}
