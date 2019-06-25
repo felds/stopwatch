@@ -1,5 +1,5 @@
 {
-  "name": "stopwatch",
+  "name": "@felds/stopwatch",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -11,6 +11,7 @@
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
+    "@types/react": "^16.8.22",
     "typescript": "3.3.3"
   },
   "scripts": {

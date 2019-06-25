@@ -18,7 +18,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importDefault(require("react"));
 var prop_types_1 = __importDefault(require("prop-types"));
-require("./demo.css");
 var StopWatch = /** @class */ (function (_super) {
     __extends(StopWatch, _super);
     function StopWatch() {
@@ -87,3 +86,4 @@ var StopWatch = /** @class */ (function (_super) {
     };
     return StopWatch;
 }(react_1.default.Component));
+exports.default = StopWatch;

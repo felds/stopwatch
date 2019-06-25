@@ -6,7 +6,7 @@
     "declaration": true,
     "outDir": "dist",
     "esModuleInterop": true,
-    "jsx": "preserve"
+    "jsx": "react"
   },
   "exclude": ["node_modules", "dist"]
 }
