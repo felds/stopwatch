@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import PropTypes from "prop-types";
 export declare type StopWatchChildrenProps = {
-    timeElapsed: number;
+    value: number;
     isRunning: boolean;
     isFinished: boolean;
     toggle(): void;
@@ -14,22 +14,22 @@ export declare type StopWatchProps = {
     duration: number;
     initialTime: number;
     onFinish(): void;
-    onChange(timeElapsed: number): void;
+    onChange(value: number): void;
     children: StopWatchChildren;
     updateInterval: number;
 };
 export declare type StopWatchState = {
     isRunning: boolean;
     lastTick?: number;
-    timeElapsed: number;
+    value: number;
 };
 export default class StopWatch extends React.Component<StopWatchProps, StopWatchState> {
     state: {
-        timeElapsed: number;
+        value: number;
         isRunning: boolean;
     };
     timeout: any;
-    lastTick: any;
+    lastUpdate: any;
     stop: () => void;
     toggle: () => void;
     pause: () => void;
@@ -50,4 +50,5 @@ export default class StopWatch extends React.Component<StopWatchProps, StopWatch
         onChange: () => void;
         updateInterval: number;
     };
+    readonly isFinished: boolean;
 }

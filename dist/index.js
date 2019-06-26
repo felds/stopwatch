@@ -23,39 +23,46 @@ var StopWatch = /** @class */ (function (_super) {
     function StopWatch() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
-            timeElapsed: 0,
-            isRunning: false,
+            value: 0,
+            isRunning: false
         };
         _this.timeout = null;
-        _this.lastTick = null;
+        _this.lastUpdate = null;
         _this.stop = function () {
             _this.setState({
                 isRunning: false,
-                timeElapsed: 0,
+                value: 0
             });
         };
         _this.toggle = function () { return (_this.state.isRunning ? _this.pause() : _this.play()); };
         _this.pause = function () { return _this.setState({ isRunning: false }); };
-        _this.play = function () { return _this.setState({ isRunning: true }); };
+        _this.play = function () {
+            if (!_this.isFinished)
+                _this.setState({ isRunning: true });
+        };
         _this.tick = function () {
-            var _a = _this.state, isRunning = _a.isRunning, timeElapsed = _a.timeElapsed;
-            var _b = _this.props, duration = _b.duration, updateInterval = _b.updateInterval, onFinish = _b.onFinish, onChange = _b.onChange;
-            var tick = performance.now();
+            var isRunning = _this.state.isRunning;
+            var updateInterval = Math.max(_this.props.updateInterval, 0);
+            var timestamp = performance.now();
             if (isRunning) {
-                var delta = _this.lastTick ? tick - _this.lastTick : 0;
-                var newTime_1 = Math.min(timeElapsed + delta, duration);
-                var isFinished_1 = isRunning && timeElapsed === duration;
+                var value_1 = _this.state.value;
+                var duration = _this.props.duration;
+                // time delta from the last update (0 if first update)
+                var delta = _this.lastUpdate ? timestamp - _this.lastUpdate : 0;
+                // force the new value to be at most the duration
+                var newValue_1 = Math.min(value_1 + delta, duration);
+                var isFinished_1 = value_1 === duration;
                 _this.setState({
-                    timeElapsed: newTime_1,
-                    isRunning: isRunning && !isFinished_1,
+                    value: newValue_1,
+                    isRunning: isRunning && !isFinished_1
                 }, function () {
+                    if (newValue_1 !== value_1)
+                        _this.props.onChange(newValue_1);
                     if (isRunning && isFinished_1)
-                        onFinish();
-                    if (newTime_1 !== timeElapsed)
-                        onChange(newTime_1);
+                        _this.props.onFinish();
                 });
             }
-            _this.lastTick = tick;
+            _this.lastUpdate = timestamp;
             _this.timeout = setTimeout(_this.tick, updateInterval);
         };
         return _this;
@@ -67,29 +74,35 @@ var StopWatch = /** @class */ (function (_super) {
         clearTimeout(this.timeout);
     };
     StopWatch.prototype.render = function () {
-        var _a = this.state, timeElapsed = _a.timeElapsed, isRunning = _a.isRunning;
-        var duration = this.props.duration;
+        var _a = this.state, isRunning = _a.isRunning, value = _a.value;
         return this.props.children({
-            timeElapsed: timeElapsed,
+            value: value,
             isRunning: isRunning,
             toggle: this.toggle,
             stop: this.stop,
             play: this.play,
             pause: this.pause,
-            isFinished: duration === timeElapsed,
+            isFinished: this.isFinished
         });
     };
+    Object.defineProperty(StopWatch.prototype, "isFinished", {
+        get: function () {
+            return this.props.duration === this.state.value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     StopWatch.propTypes = {
         onFinish: prop_types_1.default.func,
         initialTime: prop_types_1.default.number,
-        duration: prop_types_1.default.number.isRequired,
+        duration: prop_types_1.default.number.isRequired
     };
     StopWatch.defaultProps = {
         initialTime: 0,
         duration: +Infinity,
         onFinish: function () { },
         onChange: function () { },
-        updateInterval: 50,
+        updateInterval: 50
     };
     return StopWatch;
 }(react_1.default.Component));

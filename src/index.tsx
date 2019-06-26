@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import PropTypes from "prop-types";
 
 export type StopWatchChildrenProps = {
-  timeElapsed: number;
+  value: number;
   isRunning: boolean;
   isFinished: boolean;
   toggle(): void;
@@ -17,7 +17,7 @@ export type StopWatchProps = {
   duration: number;
   initialTime: number;
   onFinish(): void;
-  onChange(timeElapsed: number): void;
+  onChange(value: number): void;
   children: StopWatchChildren;
   updateInterval: number;
 };
@@ -25,7 +25,7 @@ export type StopWatchProps = {
 export type StopWatchState = {
   isRunning: boolean;
   lastTick?: number;
-  timeElapsed: number;
+  value: number;
 };
 
 export default class StopWatch extends React.Component<
@@ -33,18 +33,18 @@ export default class StopWatch extends React.Component<
   StopWatchState
 > {
   state = {
-    timeElapsed: 0,
-    isRunning: false,
+    value: 0,
+    isRunning: false
   };
 
   timeout = null;
 
-  lastTick = null;
+  lastUpdate = null;
 
   stop = () => {
     this.setState({
       isRunning: false,
-      timeElapsed: 0,
+      value: 0
     });
   };
 
@@ -52,31 +52,39 @@ export default class StopWatch extends React.Component<
 
   pause = () => this.setState({ isRunning: false });
 
-  play = () => this.setState({ isRunning: true });
+  play = () => {
+    if (!this.isFinished) this.setState({ isRunning: true });
+  };
 
   tick = () => {
-    const { isRunning, timeElapsed } = this.state;
-    const { duration, updateInterval, onFinish, onChange } = this.props;
-    const tick = performance.now();
+    const { isRunning } = this.state;
+    const updateInterval = Math.max(this.props.updateInterval, 0);
+    const timestamp = performance.now();
 
     if (isRunning) {
-      const delta = this.lastTick ? tick - this.lastTick : 0;
-      const newTime = Math.min(timeElapsed + delta, duration);
-      const isFinished = isRunning && timeElapsed === duration;
+      const { value } = this.state;
+      const { duration } = this.props;
+
+      // time delta from the last update (0 if first update)
+      const delta = this.lastUpdate ? timestamp - this.lastUpdate : 0;
+
+      // force the new value to be at most the duration
+      const newValue = Math.min(value + delta, duration);
+      const isFinished = value === duration;
 
       this.setState(
         {
-          timeElapsed: newTime,
-          isRunning: isRunning && !isFinished,
+          value: newValue,
+          isRunning: isRunning && !isFinished
         },
         () => {
-          if (isRunning && isFinished) onFinish();
-          if (newTime !== timeElapsed) onChange(newTime);
-        },
+          if (newValue !== value) this.props.onChange(newValue);
+          if (isRunning && isFinished) this.props.onFinish();
+        }
       );
     }
 
-    this.lastTick = tick;
+    this.lastUpdate = timestamp;
     this.timeout = setTimeout(this.tick, updateInterval);
   };
 
@@ -89,24 +97,23 @@ export default class StopWatch extends React.Component<
   }
 
   render() {
-    const { timeElapsed, isRunning } = this.state;
-    const { duration } = this.props;
+    const { isRunning, value } = this.state;
 
     return this.props.children({
-      timeElapsed,
+      value,
       isRunning,
       toggle: this.toggle,
       stop: this.stop,
       play: this.play,
       pause: this.pause,
-      isFinished: duration === timeElapsed,
+      isFinished: this.isFinished
     });
   }
 
   static propTypes = {
     onFinish: PropTypes.func,
     initialTime: PropTypes.number,
-    duration: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired
   };
 
   static defaultProps = {
@@ -114,6 +121,10 @@ export default class StopWatch extends React.Component<
     duration: +Infinity,
     onFinish: () => {},
     onChange: () => {},
-    updateInterval: 50,
+    updateInterval: 50
   };
+
+  get isFinished() {
+    return this.props.duration === this.state.value;
+  }
 }
