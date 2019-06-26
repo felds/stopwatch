@@ -45,22 +45,22 @@ var StopWatch = /** @class */ (function (_super) {
             var updateInterval = Math.max(_this.props.updateInterval, 0);
             var timestamp = performance.now();
             if (isRunning) {
-                var value_1 = _this.state.value;
+                var value = _this.state.value;
                 var duration = _this.props.duration;
                 // time delta from the last update (0 if first update)
                 var delta = _this.lastUpdate ? timestamp - _this.lastUpdate : 0;
                 // force the new value to be at most the duration
-                var newValue_1 = Math.min(value_1 + delta, duration);
-                var isFinished_1 = value_1 === duration;
+                var newValue = Math.min(value + delta, duration);
+                var hasFinished = newValue === duration;
+                var hasChanged = newValue !== value;
                 _this.setState({
-                    value: newValue_1,
-                    isRunning: isRunning && !isFinished_1
-                }, function () {
-                    if (newValue_1 !== value_1)
-                        _this.props.onChange(newValue_1);
-                    if (isRunning && isFinished_1)
-                        _this.props.onFinish();
+                    value: newValue,
+                    isRunning: isRunning && !hasFinished
                 });
+                if (hasChanged)
+                    _this.props.onChange(_this.state.value);
+                if (hasFinished)
+                    _this.props.onFinish();
             }
             _this.lastUpdate = timestamp;
             _this.timeout = setTimeout(_this.tick, updateInterval);

@@ -13,10 +13,10 @@ export declare type StopWatchChildren = (props: StopWatchChildrenProps) => React
 export declare type StopWatchProps = {
     duration: number;
     initialTime: number;
-    onFinish(): void;
-    onChange(value: number): void;
     children: StopWatchChildren;
     updateInterval: number;
+    onFinish(): void;
+    onChange(value: number): void;
 };
 export declare type StopWatchState = {
     isRunning: boolean;

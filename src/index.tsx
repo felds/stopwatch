@@ -16,10 +16,10 @@ export type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 export type StopWatchProps = {
   duration: number;
   initialTime: number;
-  onFinish(): void;
-  onChange(value: number): void;
   children: StopWatchChildren;
   updateInterval: number;
+  onFinish(): void;
+  onChange(value: number): void;
 };
 
 export type StopWatchState = {
@@ -70,18 +70,16 @@ export default class StopWatch extends React.Component<
 
       // force the new value to be at most the duration
       const newValue = Math.min(value + delta, duration);
-      const isFinished = value === duration;
+      const hasFinished = newValue === duration;
+      const hasChanged = newValue !== value;
 
-      this.setState(
-        {
-          value: newValue,
-          isRunning: isRunning && !isFinished
-        },
-        () => {
-          if (newValue !== value) this.props.onChange(newValue);
-          if (isRunning && isFinished) this.props.onFinish();
-        }
-      );
+      this.setState({
+        value: newValue,
+        isRunning: isRunning && !hasFinished
+      });
+
+      if (hasChanged) this.props.onChange(this.state.value);
+      if (hasFinished) this.props.onFinish();
     }
 
     this.lastUpdate = timestamp;
