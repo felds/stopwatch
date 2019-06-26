@@ -9,6 +9,7 @@
     "stopwatch"
   ],
   "repository": "https://github.com/felds/stopwatch",
+  "homepage": "https://felds.github.io/stopwatch-demo/",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
