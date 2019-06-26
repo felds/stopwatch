@@ -5,6 +5,7 @@ export type StopWatchChildrenProps = {
   value: number;
   isRunning: boolean;
   isFinished: boolean;
+  duration: number;
   toggle(): void;
   stop(): void;
   pause(): void;
@@ -34,7 +35,7 @@ export default class StopWatch extends React.Component<
 > {
   state = {
     value: this.props.initialValue,
-    isRunning: false
+    isRunning: false,
   };
 
   timeout = null;
@@ -44,7 +45,7 @@ export default class StopWatch extends React.Component<
   stop = () => {
     this.setState({
       value: this.props.initialValue,
-      isRunning: false
+      isRunning: false,
     });
   };
 
@@ -75,7 +76,7 @@ export default class StopWatch extends React.Component<
 
       this.setState({
         value: newValue,
-        isRunning: isRunning && !hasFinished
+        isRunning: isRunning && !hasFinished,
       });
 
       if (hasChanged) this.props.onChange(this.state.value);
@@ -96,22 +97,24 @@ export default class StopWatch extends React.Component<
 
   render() {
     const { isRunning, value } = this.state;
+    const { duration } = this.props;
 
     return this.props.children({
       value,
       isRunning,
+      duration,
       toggle: this.toggle,
       stop: this.stop,
       play: this.play,
       pause: this.pause,
-      isFinished: this.isFinished
+      isFinished: this.isFinished,
     });
   }
 
   static propTypes = {
     onFinish: PropTypes.func,
     initialValue: PropTypes.number,
-    duration: PropTypes.number.isRequired
+    duration: PropTypes.number.isRequired,
   };
 
   static defaultProps = {
@@ -119,7 +122,7 @@ export default class StopWatch extends React.Component<
     duration: +Infinity,
     onFinish: () => {},
     onChange: () => {},
-    updateInterval: 50
+    updateInterval: 50,
   };
 
   get isFinished() {

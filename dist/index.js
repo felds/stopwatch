@@ -24,14 +24,14 @@ var StopWatch = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
             value: _this.props.initialValue,
-            isRunning: false
+            isRunning: false,
         };
         _this.timeout = null;
         _this.lastUpdate = null;
         _this.stop = function () {
             _this.setState({
                 value: _this.props.initialValue,
-                isRunning: false
+                isRunning: false,
             });
         };
         _this.toggle = function () { return (_this.state.isRunning ? _this.pause() : _this.play()); };
@@ -55,7 +55,7 @@ var StopWatch = /** @class */ (function (_super) {
                 var hasChanged = newValue !== value;
                 _this.setState({
                     value: newValue,
-                    isRunning: isRunning && !hasFinished
+                    isRunning: isRunning && !hasFinished,
                 });
                 if (hasChanged)
                     _this.props.onChange(_this.state.value);
@@ -75,14 +75,16 @@ var StopWatch = /** @class */ (function (_super) {
     };
     StopWatch.prototype.render = function () {
         var _a = this.state, isRunning = _a.isRunning, value = _a.value;
+        var duration = this.props.duration;
         return this.props.children({
             value: value,
             isRunning: isRunning,
+            duration: duration,
             toggle: this.toggle,
             stop: this.stop,
             play: this.play,
             pause: this.pause,
-            isFinished: this.isFinished
+            isFinished: this.isFinished,
         });
     };
     Object.defineProperty(StopWatch.prototype, "isFinished", {
@@ -95,14 +97,14 @@ var StopWatch = /** @class */ (function (_super) {
     StopWatch.propTypes = {
         onFinish: prop_types_1.default.func,
         initialValue: prop_types_1.default.number,
-        duration: prop_types_1.default.number.isRequired
+        duration: prop_types_1.default.number.isRequired,
     };
     StopWatch.defaultProps = {
         initialValue: 0,
         duration: +Infinity,
         onFinish: function () { },
         onChange: function () { },
-        updateInterval: 50
+        updateInterval: 50,
     };
     return StopWatch;
 }(react_1.default.Component));
