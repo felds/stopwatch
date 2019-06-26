@@ -15,7 +15,7 @@ export type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 
 export type StopWatchProps = {
   duration: number;
-  initialTime: number;
+  initialValue: number;
   children: StopWatchChildren;
   updateInterval: number;
   onFinish(): void;
@@ -33,7 +33,7 @@ export default class StopWatch extends React.Component<
   StopWatchState
 > {
   state = {
-    value: 0,
+    value: this.props.initialValue,
     isRunning: false
   };
 
@@ -43,8 +43,8 @@ export default class StopWatch extends React.Component<
 
   stop = () => {
     this.setState({
-      isRunning: false,
-      value: 0
+      value: this.props.initialValue,
+      isRunning: false
     });
   };
 
@@ -110,12 +110,12 @@ export default class StopWatch extends React.Component<
 
   static propTypes = {
     onFinish: PropTypes.func,
-    initialTime: PropTypes.number,
+    initialValue: PropTypes.number,
     duration: PropTypes.number.isRequired
   };
 
   static defaultProps = {
-    initialTime: 0,
+    initialValue: 0,
     duration: +Infinity,
     onFinish: () => {},
     onChange: () => {},

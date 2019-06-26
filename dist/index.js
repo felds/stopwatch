@@ -23,15 +23,15 @@ var StopWatch = /** @class */ (function (_super) {
     function StopWatch() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
-            value: 0,
+            value: _this.props.initialValue,
             isRunning: false
         };
         _this.timeout = null;
         _this.lastUpdate = null;
         _this.stop = function () {
             _this.setState({
-                isRunning: false,
-                value: 0
+                value: _this.props.initialValue,
+                isRunning: false
             });
         };
         _this.toggle = function () { return (_this.state.isRunning ? _this.pause() : _this.play()); };
@@ -94,11 +94,11 @@ var StopWatch = /** @class */ (function (_super) {
     });
     StopWatch.propTypes = {
         onFinish: prop_types_1.default.func,
-        initialTime: prop_types_1.default.number,
+        initialValue: prop_types_1.default.number,
         duration: prop_types_1.default.number.isRequired
     };
     StopWatch.defaultProps = {
-        initialTime: 0,
+        initialValue: 0,
         duration: +Infinity,
         onFinish: function () { },
         onChange: function () { },

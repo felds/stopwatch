@@ -12,7 +12,7 @@ export declare type StopWatchChildrenProps = {
 export declare type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 export declare type StopWatchProps = {
     duration: number;
-    initialTime: number;
+    initialValue: number;
     children: StopWatchChildren;
     updateInterval: number;
     onFinish(): void;
@@ -40,11 +40,11 @@ export default class StopWatch extends React.Component<StopWatchProps, StopWatch
     render(): React.ReactNode;
     static propTypes: {
         onFinish: PropTypes.Requireable<(...args: any[]) => any>;
-        initialTime: PropTypes.Requireable<number>;
+        initialValue: PropTypes.Requireable<number>;
         duration: PropTypes.Validator<number>;
     };
     static defaultProps: {
-        initialTime: number;
+        initialValue: number;
         duration: number;
         onFinish: () => void;
         onChange: () => void;
