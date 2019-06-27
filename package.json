@@ -1,6 +1,6 @@
 {
   "name": "@felds/stopwatch",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "A renderless react component to create stopwatches.",
   "keywords": [
     "react",
