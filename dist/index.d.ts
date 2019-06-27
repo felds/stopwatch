@@ -8,7 +8,7 @@ export declare type StopWatchChildrenProps = {
     stop(): void;
     pause(): void;
     play(): void;
-} | StopWatchProps;
+} & StopWatchProps;
 export declare type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 export declare type StopWatchProps = {
     duration: number;
