@@ -1,16 +1,17 @@
 import React, { ReactNode } from "react";
 import PropTypes from "prop-types";
 
-export type StopWatchChildrenProps = {
-  value: number;
-  isRunning: boolean;
-  isFinished: boolean;
-  duration: number;
-  toggle(): void;
-  stop(): void;
-  pause(): void;
-  play(): void;
-};
+export type StopWatchChildrenProps =
+  | {
+      value: number;
+      isRunning: boolean;
+      isFinished: boolean;
+      toggle(): void;
+      stop(): void;
+      pause(): void;
+      play(): void;
+    }
+  | StopWatchProps;
 
 export type StopWatchChildren = (props: StopWatchChildrenProps) => ReactNode;
 
@@ -102,7 +103,7 @@ export default class StopWatch extends React.Component<
     return this.props.children({
       value,
       isRunning,
-      duration,
+      ...this.props,
       toggle: this.toggle,
       stop: this.stop,
       play: this.play,
